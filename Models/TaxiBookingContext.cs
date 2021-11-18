@@ -15,5 +15,6 @@ namespace TaxiBookingAPI.Models
         }
 
         public DbSet<TaxiBooking> TaxiBookingItems { get; set; } = null!;
+        public DbSet<currentlocation> currentlocationItems { get; set; } = null!;
     }
 }
