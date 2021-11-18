@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,7 +26,7 @@ namespace TaxiBookingAPI.Controllers
             _logger = logger;
         }
 
-        private async Task<ActionResult> GetCurrentLocation()
+        private async Task<IList> GetCurrentLocation()
         {
             try
             {
@@ -37,10 +38,12 @@ namespace TaxiBookingAPI.Controllers
                         _logger.LogInformation("Json Result" + apiResponse);
                         // JsonConvert.DeserializeObject<currentlocation>(apiResponse);
                         currentlocation locationinfo = JsonConvert.DeserializeObject<currentlocation>(apiResponse);
-                        //TaxiBooking taxi = new TaxiBooking();
-                        //taxi.Current_Location_Latitude = locationinfo.latitude;
-                        //taxi.Current_Location_Longitude = locationinfo.longitude;
-                        return Ok(locationinfo);
+                        TaxiBooking taxi = new TaxiBooking();
+                        taxi.Current_Location_Latitude = locationinfo.latitude;
+                        taxi.Current_Location_Longitude = locationinfo.longitude;
+                        Console.WriteLine(taxi.Current_Location_Longitude);
+                        List<string> loc = new List<string>() { taxi.Current_Location_Latitude , taxi.Current_Location_Longitude };
+                        return loc;
                     }
                 }
             }
@@ -110,13 +113,15 @@ namespace TaxiBookingAPI.Controllers
         {
             try
             {
-                currentlocation loca = new currentlocation();
-                _logger.LogInformation("Lattidue" + loca.latitude);
-                _logger.LogInformation("longitude" + loca.longitude);
-                Console.WriteLine("Lattidue" + loca.latitude);
-                Console.WriteLine("Lattidue" + loca.longitude);
-                taxiBooking.Current_Location_Latitude = loca.latitude;
-                taxiBooking.Current_Location_Longitude = loca.longitude;
+                var obj = await GetCurrentLocation();
+
+                //currentlocation loca = new currentlocation();
+                _logger.LogInformation("Lattidue" + obj[0]);
+                _logger.LogInformation("longitude" + obj[1]);
+                //Console.WriteLine("Lattidue" + loca.latitude);
+                //Console.WriteLine("Lattidue" + loca.longitude);
+                taxiBooking.Current_Location_Latitude = obj[0].ToString();
+                taxiBooking.Current_Location_Longitude = obj[1].ToString();
                 _context.TaxiBookingItems.Add(taxiBooking);
                 await _context.SaveChangesAsync();
 
