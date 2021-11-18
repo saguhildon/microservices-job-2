@@ -17,7 +17,8 @@ namespace TaxiBookingAPI.Models
     }
 
     public class currentlocation
-    {
+    { 
+        public int Id { get; set; }
         public string ip { get; set; }
         public string country_code { get; set; }
         public String country_name { get; set; }
